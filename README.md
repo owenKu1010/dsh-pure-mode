@@ -1,5 +1,7 @@
 # Pure mode · a skill-free composer switch for DeepSeek Harness
 
+**English** | [简体中文](README.zh-CN.md)
+
 A tiny DSH bundle that puts one switch beside the permission control in the composer. While it is on,
 **that session mounts no skill at all**: the `skill` tool is gone and so is the persistent skill catalog
 that would otherwise ride along in every request.
@@ -18,6 +20,22 @@ sessions where you do not want the model deciding on its own that some listed sk
 | **On** | same bordered chip flooded with the accent, inverted label, filled leaf + a dot | no `skill` tool, no skill catalog |
 
 Turning it back off restores both, from the next step onward.
+
+## Not related to dsh-purge
+
+The names sound adjacent — "purge", "pure" — so, plainly: this plugin has **nothing to do with
+`dsh-purge`** and does not replace, extend or depend on it. They solve different problems:
+
+| | dsh-purge | Pure mode (this plugin) |
+| --- | --- | --- |
+| What it touches | instruction / prompt authority: patches, shim injection, override files | tool visibility of one live session |
+| Where the change lives | files in the profile, applied at composition time | one tool restriction in that Agent's context |
+| When it takes effect | after a restart of the composition | on the next step, no restart |
+| How you undo it | revert the patches / shim / overrides | release the restriction, tool returns immediately |
+| Scope | the whole profile | a single session |
+
+It writes no files outside `$DSH_HOME/pure-mode/`, reads none of dsh-purge's state, and changes no prompt
+text. Both can be installed in the same profile and neither notices the other.
 
 ## Why
 

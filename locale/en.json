@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Pure mode",
-    "description": "Adds a switch beside the permission control in the composer. While it is on, that session mounts no skill: the skill tool and its catalog are removed, and turning it off restores both.",
+    "description": "Adds a switch beside the permission control in the composer. While it is on, that session mounts no skill: the skill tool and its catalog are removed, and turning it off restores both. Not related to dsh-purge.",
     "detail": "docs/DETAIL.md"
   },
   "label": "Pure mode",

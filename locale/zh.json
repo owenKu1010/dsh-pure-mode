@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "纯净模式",
-    "description": "在输入栏的权限控件旁加一个开关。开启后该会话不挂载任何 skill：skill 工具与其目录都会移除，关闭即恢复。",
-    "detail": "docs/DETAIL.md"
+    "description": "在输入栏的权限控件旁加一个开关。开启后该会话不挂载任何 skill：skill 工具与其目录都会移除，关闭即恢复。与 dsh-purge 无关。",
+    "detail": "docs/DETAIL.zh.md"
   },
   "label": "纯净模式",
   "on": "纯净模式已开启：本会话不挂载任何 skill（目录与 skill 工具都已移除）",

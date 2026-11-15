@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-pure-mode",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "type": "module",
   "description": "A DSH composer switch that mounts no skill in one session: it hides the skill tool, and therefore the durable skill catalog, until you turn it back off.",

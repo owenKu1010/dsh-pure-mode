@@ -1,34 +1,51 @@
-# 纯净模式（Pure mode）
+# Pure mode
 
-输入栏权限控件右侧的一个开关。开启后，**当前会话不挂载任何 skill**：模型看不到 skill 目录，也拿不到 `skill` 工具。关闭后立即恢复两者。
+One switch to the right of the permission control in the composer. While it is on, **the current session
+mounts no skill**: the model sees no skill catalog and cannot call the `skill` tool. Turning it off
+restores both immediately.
 
-## 它解决的问题
+> Not related to `dsh-purge`: this plugin touches no prompt text, patches no files and injects no shim —
+> it only hides one tool for one session, at runtime.
 
-skill 目录是一段持久的 user 消息，`skill` 工具还有固定 schema，两者在每个请求里都要重新发送。不打算用 skill 的会话（纯问答、纯写作、临时跑一条命令）为这两项持续付费，也不希望模型因为目录里恰好有某个 skill 而自作主张去加载。
+## What it solves
 
-## 用法
+The skill catalog is a durable user message, and the `skill` tool carries a fixed schema; both are sent
+again on every request. A session that will not use skills — plain Q&A, writing, a one-off command — keeps
+paying for them, and the catalog also invites the model to load something on its own.
 
-1. 打开任意会话，在输入栏左侧找到叶子图标的 **纯净模式** 按钮（权限控件与专家控件之间）。
-2. 点一下：按钮由「描边高亮」变成「实心色块 + 实心叶 + 圆点」，本会话进入纯净模式。下一条消息发出前，harness 会追加一条替换目录，声明先前的 skill 名称全部失效。
-3. 再点一下：回到描边高亮（常态外观），目录以新的一条替换消息重新发布。
+## Usage
 
-常态就是这个按钮的高亮外观——**一圈品牌蓝描边（`#4176e6`）+ 透明底 + 蓝色叶片 + 正常文字色**，不需要先点一下才看得见；「已开启」用的是另一套形态——同一个描边胶囊被品牌蓝灌满，文字反色，叶片变实心并多一个圆点。两种状态是「描边」与「填满」之别，不是同色深浅之差。
+1. In any session, find the leaf-marked **Pure mode** switch at the left of the composer (between the
+   permission control and the experts control).
+2. Click once: the switch goes from an outlined chip to a filled one (filled leaf + dot) and the session
+   enters pure mode. Before the next message, the harness appends a replacement catalog declaring every
+   earlier skill name dead.
+3. Click again: back to the outlined idle look and the catalog is republished as a new replacement.
 
-> 注意 token 陷阱：`--dsw-alias-brand-primary` 是**墨色**（浅色主题 rgb(15,17,21)），拿它做淡底会得到一层灰；真正的品牌蓝是 `--dsw-alias-brand-primary-new-colorprimary-new-color`（浅色 #4176e6），本插件以它为 `--dsppm-accent`，并以 `--dsw-static-blue-500` 兜底。
+The outlined look is the idle state — **1px accent-blue border (`#4176e6`), transparent fill, blue leaf,
+normal label** — so the control is findable without being switched on. "On" is a different body: the same
+bordered chip flooded with the accent, inverted label, a filled leaf and a dot. The two states differ by
+outline versus fill, not by two tints of one colour.
 
-开关状态按会话保存：
+> Token trap worth knowing: `--dsw-alias-brand-primary` is the **ink** colour (light theme
+> rgb(15,17,21)), so tinting with it produces a grey slab. The real accent is
+> `--dsw-alias-brand-primary-new-colorprimary-new-color` (light theme #4176e6); this plugin exposes it as
+> `--dsppm-accent`, falling back to `--dsw-static-blue-500`.
 
-| 情况 | 结果 |
+The choice is stored per session:
+
+| Situation | Result |
 | --- | --- |
-| 在本会话点过开关 | 该会话采用这次的选择 |
-| 从没点过开关的新会话 | 采用最近一次开关留下的值 |
-| 关掉会话再打开 | 保持该会话自己的选择 |
+| Toggled inside this session | the session keeps that choice |
+| New session never toggled | inherits the value the last toggle left behind |
+| Close and reopen the session | keeps that session's own choice |
 
-状态存在 `$DSH_HOME/pure-mode/state.json`，可直接删除该文件把一切恢复为关闭。
+State lives at `$DSH_HOME/pure-mode/state.json`; delete the file to reset everything to off.
 
-## 配置
+## Configuration
 
-默认只藏 `skill`。要让纯净模式把它之外的 skill 面也一起收走（例如技能管理器注册的 `create_skill`），在该行上替换 `config`：
+By default only `skill` is hidden. To take the rest of the skill surface with it — for example the
+`create_skill` tool registered by the skills manager — restate the row's `config`:
 
 ```yaml
 - id: pure-mode
@@ -37,53 +54,69 @@ skill 目录是一段持久的 user 消息，`skill` 工具还有固定 schema�
     denyTools: [skill, create_skill]
 ```
 
-`denyTools` 里的名字必须是该 Agent 能看到的全局工具名；写错名字不会静默失败——按钮会提示「工具隐藏失败」，宿主日志里带着 `tools.restrict()` 给出的已知工具清单。
+Each name must be a global tool name the agent can see. A wrong name does not fail silently: the switch
+reports "hiding the tool failed" and the Host log carries the `tools.restrict()` message with the known
+tool list.
 
-## 实现方式
+## How it works
 
-宿主侧只做一件事：在**该 Agent 自己的上下文**上调用
+The Host does exactly one thing, on **the Agent's own context**:
 
 ```js
 agent.ctx.effect(() => agent.ctx.tools.restrict({ deny: ['skill'] }), 'pure-mode: hide the skill tool for this session')
 ```
 
-`dsh-tool-skill` 在每一步准备时用「本插件注册的那份 `skill` 定义」与「该 Agent 实际解析到的 `skill` 定义」做同一性比较，所以一个被限制掉的工具会同时带走：
+`dsh-tool-skill` compares, at every step preparation, the exact `skill` definition it registered with the
+one the Agent actually resolves. A restricted-away tool therefore takes away both:
 
-- 模型侧的 `skill` 工具 schema；
-- 会话里那条持久的 skill 目录（已被发布过的话，会追加一条空目录声明旧名称失效）。
+- the model-facing `skill` tool schema, and
+- the durable skill catalog in the session (if one was published, an empty replacement declares the old
+  names dead).
 
-没有改补丁、没有改别的插件的注册，卸载本插件或释放 effect 就回到原样。
+No patch is edited, no other plugin's registration is touched; unloading this plugin or disposing the
+effect returns everything to normal.
 
-客户端开关本身没有权限：它只通过已认证的同源路由 `/api/pure-mode` 读写宿主保存的状态，宿主再决定是否施加限制。
+The client switch holds no authority: it reads and writes the stored mode over the authenticated
+same-origin route `/api/pure-mode`, and the Host decides whether to apply the restriction.
 
-## 与技能管理器（`@michengai/dsh-skills-manager`）的关系
+## Relationship with the skills manager (`@michengai/dsh-skills-manager`)
 
-两者不抢同一块地，天然互补：
+They do not compete for the same ground and compose naturally:
 
-| | 技能管理器 | 纯净模式 |
+| | Skills manager | Pure mode |
 | --- | --- | --- |
-| 作用面 | **单个 skill** 的调用策略（`modelInvocable` / `userInvocable`）与来源开关 | **整个 `skill` 工具**的可见性 |
-| 实现位置 | `ctx.skills` 注册表的提供方层 | `agent.ctx.tools.restrict()` |
-| 卸载/关闭后 | 逐条恢复 | 整块恢复 |
+| Surface | per-skill invocation policy (`modelInvocable` / `userInvocable`) and source switches | visibility of the whole `skill` tool |
+| Where | provider layer of the `ctx.skills` registry | `agent.ctx.tools.restrict()` |
+| After it is off | each skill restores individually | the whole thing restores |
 
-管理器的状态由 `effectiveSkillPolicy()` 折算成调用策略：被关掉的 skill（或整条被关掉的来源）拿到 `{ modelInvocable: false, userInvocable: false }`，于是它从一开始就进不了目录、`skill` 工具拒绝加载、`/name` 手势也不认。纯净模式只做一件事——把 `skill` 工具整个藏起来，因此**它既不会重新打开**管理器关掉的 skill，**也不会改写**管理器的状态：
+The manager folds its state into invocation policy through `effectiveSkillPolicy()`: a disabled skill (or a
+disabled source) reports `{ modelInvocable: false, userInvocable: false }`, so it never reaches the catalog,
+the `skill` tool refuses it, and the `/name` gesture does not recognise it. Pure mode only hides the tool,
+so it **never re-enables** what the manager disabled, and **never rewrites** the manager's state:
 
-- 纯净模式开：一个 skill 都不挂载（管理器里开着的也看不到）。
-- 纯净模式关：回到「管理器允许什么就是什么」——你在那边关掉的，照样不出现、也加载不了。
-- 在纯净模式开着的时候去管理器里开关 skill：状态照常写入，下一次关闭纯净模式后按管理器的结果生效。
+- pure mode on: nothing is mounted (including skills the manager allows);
+- pure mode off: back to "whatever the manager allows" — what you disabled there stays absent and unloadable;
+- toggling skills in the manager while pure mode is on still records normally and applies once pure mode is off.
 
-也就是说「纯净模式关掉 = 恢复原状」，这个原状里已经扣掉了你在管理器里关掉的那些。
+In other words "pure mode off = back to normal", and that normal already has your manager-side disables
+subtracted.
 
-## 已验证与未验证
+## Verified, and what is not
 
-已验证（本机 Desktop profile，2026-11-15）：
+Verified (this machine's Desktop profile, 2026-11-15):
 
-- 插件安装、行激活、`state.json` 读写、路由往返、按钮在输入栏渲染并可切换。
-- 开启后该会话的 `skill` 工具从工具表中消失，会话被追加空目录声明；关闭后工具与目录同时回来。
+- plugin install, row activation, `state.json` round trip, route round trip, the switch rendering in the
+  composer and toggling;
+- with it on, that session's `skill` tool left the tool list and an empty catalog declaration was appended;
+  with it off, tool and catalog both returned.
 
-已知边界：
+Known limits:
 
-- **历史不会消失。** 开关之前已经发出的 skill 目录仍在会话历史里，继续按 token 计费，直到压缩。真正的节省来自「从一开始就开着」的新会话。
-- **显式 `/skill-name` 仍会注入。** 用户手打的斜杠调用是用户动作，不属于「挂载」，宿主侧不做拦截。
-- **只针对 skill。** 其他工具、MCP、插件都不受影响。
-- 若某套组合的 skill 工具不是注册在 Agent 祖先层（例如被别的作用域插件重新注册到 Agent 自身层），`tools.restrict()` 会报错，开关会提示「工具隐藏失败」而不是假装成功。
+- **History is not retracted.** A catalog published before you flipped the switch stays in the session and
+  keeps costing tokens until compaction. The real saving comes from a session that started in pure mode.
+- **Explicit `/skill-name` still injects.** Typing a skill name is a user act, not a mount, and the Host
+  does not intercept it.
+- **Skill-only.** Other tools, MCP servers and plugins are untouched.
+- If a composition registers the skill tool outside the Agent's ancestor layers (for example re-registered
+  into the Agent's own layer by another scoped plugin), `tools.restrict()` refuses; the switch then reports
+  "hiding the tool failed" instead of pretending it worked.
