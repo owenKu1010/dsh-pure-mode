@@ -1,0 +1,59 @@
+{
+  "name": "@local/dsh-pure-mode",
+  "version": "1.2.0",
+  "private": true,
+  "type": "module",
+  "description": "A DSH composer switch that mounts no skill in one session: it hides the skill tool, and therefore the durable skill catalog, until you turn it back off.",
+  "license": "MIT",
+  "author": {
+    "name": "owenKu1010",
+    "url": "https://github.com/owenKu1010"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owenKu1010/dsh-pure-mode.git"
+  },
+  "homepage": "https://github.com/owenKu1010/dsh-pure-mode#readme",
+  "bugs": {
+    "url": "https://github.com/owenKu1010/dsh-pure-mode/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "skill",
+    "skills",
+    "cordis"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "docs",
+    "icon.svg",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "title": "Pure mode",
+    "description": "Adds a switch beside the permission control in the composer. While it is on, that session mounts no skill: the skill tool and its catalog are removed, and turning it off restores both.",
+    "detail": "docs/DETAIL.md"
+  },
+  "label": "Pure mode",
+  "on": "Pure mode is on: no skill is mounted in this session (catalog and skill tool both removed)",
+  "off": "Pure mode is off: skills are mounted again in this session",
+  "busy": "Switching pure mode…",
+  "failed": "Pure mode could not be switched",
+  "unapplied": "Saved, but hiding the tool failed for this session; see the Host log"
+}

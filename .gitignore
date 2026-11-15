@@ -1,0 +1,11 @@
+node_modules/
+pnpm-lock.yaml
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local runtime state this plugin writes under $DSH_HOME, never into the repo:
+state.json
+client.log

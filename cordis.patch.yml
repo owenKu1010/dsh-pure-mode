@@ -1,0 +1,3 @@
+- insert:
+    - id: pure-mode
+      name: '@local/dsh-pure-mode'
