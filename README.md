@@ -50,15 +50,22 @@ turns the whole subsystem off for one session without touching a patch, a preset
 
 ## Install
 
-This is a normal DSH bundle (`dsh.bundle.patch` in `package.json`), installed into a profile:
+Published on npm as **`dsh-pure-mode`**. It is a normal DSH bundle (`dsh.bundle.patch` in `package.json`),
+installed into a profile — pick either route:
 
-1. Clone this repository anywhere on disk:
-   `git clone https://github.com/owenKu1010/dsh-pure-mode.git`
+**From npm (preferred — no clone, no build step):**
+
+1. In DSH open **Plugins → Add plugin** and give it `dsh-pure-mode`.
+2. Confirm the `dsh-pure-mode` row is enabled, then reload the page.
+
+**From a checkout:**
+
+1. `git clone https://github.com/owenKu1010/dsh-pure-mode.git`
 2. In DSH open **Plugins → Add plugin** and point it at the cloned folder (local directory install).
-3. Confirm the `@local/dsh-pure-mode` row is enabled, then reload the page.
+3. Confirm the `dsh-pure-mode` row is enabled, then reload the page.
 
-The row resolves as a bundle, inserts one plugin row named `pure-mode`, and needs a page reload once for
-the client half to appear in the composer.
+Either way the row resolves as a bundle, inserts one plugin row named `pure-mode`, and needs a page reload
+once for the client half to appear in the composer.
 
 Requires the shipped skill tool to be mounted (`@deepseek-ai/dsh-tool-skill`, part of the default base
 composition). Nothing else.
@@ -81,7 +88,7 @@ By default only `skill` is hidden. To take the rest of the skill surface with it
 
 ```yaml
 - id: pure-mode
-  name: '@local/dsh-pure-mode'
+  name: 'dsh-pure-mode'
   config:
     denyTools: [skill, create_skill]
 ```

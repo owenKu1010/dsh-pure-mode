@@ -15,7 +15,7 @@
  * the rendering changes, and a stale page becomes visible instead of guessed at.
  */
 window.__ModuleLoader__.load({
-  id: '@local/dsh-pure-mode',
+  id: 'dsh-pure-mode',
   factory(require) {
     const React = require('react')
     const h = React.createElement

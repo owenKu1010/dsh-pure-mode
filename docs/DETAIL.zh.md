@@ -34,7 +34,7 @@ skill 目录是一段持久的 user 消息，`skill` 工具还有固定 schema�
 
 ```yaml
 - id: pure-mode
-  name: '@local/dsh-pure-mode'
+  name: 'dsh-pure-mode'
   config:
     denyTools: [skill, create_skill]
 ```

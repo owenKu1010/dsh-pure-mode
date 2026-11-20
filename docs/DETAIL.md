@@ -49,7 +49,7 @@ By default only `skill` is hidden. To take the rest of the skill surface with it
 
 ```yaml
 - id: pure-mode
-  name: '@local/dsh-pure-mode'
+  name: 'dsh-pure-mode'
   config:
     denyTools: [skill, create_skill]
 ```

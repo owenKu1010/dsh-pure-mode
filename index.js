@@ -8,7 +8,7 @@
  * restricted-away tool removes both the model-facing schema and the durable
  * skill catalog that would otherwise be published into the session.
  *
- * @module @local/dsh-pure-mode
+ * @module dsh-pure-mode
  */
 
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'

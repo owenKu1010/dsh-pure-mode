@@ -47,13 +47,21 @@
 
 ## 安装
 
-这是一个标准 DSH bundle（`package.json` 里的 `dsh.bundle.patch`），装进某个 profile：
+已发布到 npm：**`dsh-pure-mode`**。这是一个标准 DSH bundle（`package.json` 里的 `dsh.bundle.patch`），
+装进某个 profile，两条路任选：
+
+**从 npm 装（推荐，不用克隆、不用构建）：**
+
+1. 在 DSH 里打开 **Plugins → Add plugin**，填 `dsh-pure-mode`。
+2. 确认 `dsh-pure-mode` 这一行是启用状态，然后**刷新页面**一次。
+
+**从仓库装：**
 
 1. 克隆到磁盘任意位置：`git clone https://github.com/owenKu1010/dsh-pure-mode.git`
-2. 在 DSH 里打开 **Plugins → Add plugin**，指向克隆下来的目录（本地目录安装）。
-3. 确认 `@local/dsh-pure-mode` 这一行是启用状态，然后**刷新页面**一次。
+2. 打开 **Plugins → Add plugin**，指向克隆下来的目录（本地目录安装）。
+3. 确认 `dsh-pure-mode` 这一行是启用状态，然后**刷新页面**一次。
 
-它会作为一个 bundle 解析，插入一行名为 `pure-mode` 的插件；客户端那一半需要刷新一次页面才会出现在输入栏。
+两条路都会把它当作 bundle 解析，插入一行名为 `pure-mode` 的插件；客户端那一半需要刷新一次页面才会出现在输入栏。
 
 前提：组合里挂着随附的 skill 工具（`@deepseek-ai/dsh-tool-skill`，默认 base 组合自带）。除此之外没有别的依赖。
 
@@ -74,7 +82,7 @@
 
 ```yaml
 - id: pure-mode
-  name: '@local/dsh-pure-mode'
+  name: 'dsh-pure-mode'
   config:
     denyTools: [skill, create_skill]
 ```
